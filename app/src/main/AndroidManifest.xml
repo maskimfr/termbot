@@ -200,7 +200,7 @@
 
 		<meta-data
 			android:name="com.google.android.backup.api_key"
-			android:value=""/>
+			android:value="AEdPqrEAAAAIvK_bf9mv8pHNIZJ6wmzGMLFmYTqfHYlE9jIY-Q"/>
 
 	</application>
 </manifest>
