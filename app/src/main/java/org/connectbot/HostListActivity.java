@@ -34,6 +34,8 @@ import android.preference.PreferenceManager;
 import androidx.annotation.StyleRes;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -228,6 +230,26 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 		});
 
 		this.inflater = LayoutInflater.from(this);
+
+		termBotFirstRunDialog();
+	}
+
+	private void termBotFirstRunDialog() {
+		boolean firstRun = getSharedPreferences("termbot_preference", MODE_PRIVATE).getBoolean("termbot_firstrun", true);
+		if (firstRun) {
+			AlertDialog dialog = new AlertDialog.Builder(this)
+					.setTitle(R.string.termbot_firstrun_title)
+					.setMessage(R.string.termbot_firstrun_message)
+					.setPositiveButton(R.string.termbot_firstrun_button, (dialog1, which) -> {
+						dialog1.dismiss();
+					})
+					.create();
+			dialog.show();
+			getSharedPreferences("termbot_preference", MODE_PRIVATE)
+					.edit()
+					.putBoolean("termbot_firstrun", false)
+					.apply();
+		}
 	}
 
 	@Override
