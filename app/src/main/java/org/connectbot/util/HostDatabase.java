@@ -52,7 +52,7 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 	public final static String TAG = "CB.HostDatabase";
 
 	public final static String DB_NAME = "hosts";
-	public final static int DB_VERSION = 25;
+	public final static int DB_VERSION = 26;
 
 	public final static String TABLE_HOSTS = "hosts";
 	public final static String FIELD_HOST_NICKNAME = "nickname";
@@ -396,6 +396,9 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 					+ " FROM " + TABLE_HOSTS);
 			db.execSQL("DROP TABLE " + TABLE_HOSTS);
 			db.execSQL("ALTER TABLE " + TABLE_HOSTS + "_upgrade RENAME TO " + TABLE_HOSTS);
+			// fall through
+		case 25:
+			// TermBot update with agents, no longer in this new version based on Hardware Security SDK
 		}
 	}
 
