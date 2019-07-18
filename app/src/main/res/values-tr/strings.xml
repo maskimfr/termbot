@@ -191,7 +191,7 @@
   <string name="no">Hayır</string>
   <string name="yes">Evet</string>
   <string name="menu_colors_reset">Sıfırla</string>
-  <string name="app_is_running">ConnectBot çalışıyor</string>
+  <string name="app_is_running">TermBot çalışıyor</string>
   <string name="color_red">kırmızı</string>
   <string name="color_green">yeşil</string>
   <string name="color_blue">mavi</string>
