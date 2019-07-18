@@ -43,10 +43,9 @@
 		android:allowBackup="true"
 		android:backupAgent=".service.BackupAgent"
 		android:description="@string/app_desc"
-		android:icon="@mipmap/icon"
+		android:icon="@drawable/ic_launcher"
 		android:killAfterRestore="true"
 		android:label="@string/app_name"
-		android:roundIcon="@mipmap/icon_round"
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
 
