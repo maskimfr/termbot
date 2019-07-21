@@ -104,6 +104,7 @@
 
 	<string name="pubkey_generate">"Generate"</string>
 	<string name="pubkey_delete">"Delete key"</string>
+	<string name="pubkey_rename">"Rename key"</string>
 	<!-- Dialog title when user must move finger randomly over an area to gather entropy (collect random bits) -->
 	<string name="pubkey_gather_entropy">"Gathering Entropy"</string>
 	<string name="pubkey_touch_prompt">"Touch this box to gather randomness: %1$d%% done"</string>
@@ -470,6 +471,10 @@
 	<string name="delete_message">"Are you sure you want to delete '%1$s'?"</string>
 	<string name="delete_pos">"Yes, delete"</string>
 	<string name="delete_neg">"Cancel"</string>
+
+	<string name="rename_message">"Enter a new name for '%1$s'"</string>
+	<string name="rename_pos">"Save"</string>
+	<string name="rename_neg">"Cancel"</string>
 
 	<string name="disconnect_all_message">"Are you sure you want to disconnect from all connected hosts?"</string>
 	<string name="disconnect_all_pos">"Yes, disconnect"</string>

@@ -141,6 +141,21 @@ public class PubkeyDatabase extends RobustSQLiteOpenHelper {
 		}
 	}
 
+	public void renamePubkey(PubkeyBean pubkey, String newNickname) {
+		HostDatabase hostdb = HostDatabase.get(context);
+		hostdb.stopUsingPubkey(pubkey.getId());
+
+		mDb.beginTransaction();
+		try {
+			ContentValues args = new ContentValues();
+			args.put(FIELD_PUBKEY_NICKNAME, newNickname);
+			mDb.update(TABLE_PUBKEYS, args, "_id = ?", new String[] { Long.toString(pubkey.getId()) });
+			mDb.setTransactionSuccessful();
+		} finally {
+			mDb.endTransaction();
+		}
+	}
+
 	public List<PubkeyBean> allPubkeys() {
 		return getPubkeys(null, null);
 	}

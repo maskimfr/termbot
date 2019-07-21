@@ -702,6 +702,38 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 				}
 			});
 
+			MenuItem rename = menu.add(R.string.pubkey_rename);
+			rename.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+				@Override
+				public boolean onMenuItemClick(MenuItem item) {
+					final EditText edittext = new EditText(PubkeyListActivity.this);
+					edittext.setText(pubkey.getNickname());
+					// prompt user to make sure they really want this
+					new androidx.appcompat.app.AlertDialog.Builder(
+							PubkeyListActivity.this, R.style.AlertDialogTheme)
+							.setView(edittext)
+							.setMessage(getString(R.string.rename_message, pubkey.getNickname()))
+							.setPositiveButton(R.string.rename_pos, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+
+									// dont forget to remove from in-memory
+									if (loaded) {
+										bound.removeKey(pubkey.getNickname());
+									}
+
+									// rename in database and update gui
+									PubkeyDatabase pubkeyDb = PubkeyDatabase.get(PubkeyListActivity.this);
+									pubkeyDb.renamePubkey(pubkey, edittext.getText().toString());
+									updateList();
+								}
+							})
+							.setNegativeButton(R.string.rename_neg, null).create().show();
+
+					return true;
+				}
+			});
+
 			MenuItem delete = menu.add(R.string.pubkey_delete);
 			delete.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 				@Override
