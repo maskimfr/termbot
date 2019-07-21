@@ -72,6 +72,7 @@ public class SecurityKeyActivity extends AppCompatActivity implements SecurityKe
 		SecurityKeyDialogOptions options = SecurityKeyDialogOptions.builder()
 				.setTitle(title)
 				.setShowReset(true)
+				.setAllowKeyboard(true)
 				.setPreventScreenshots(!BuildConfig.DEBUG)
 				.build();
 
