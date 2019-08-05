@@ -30,6 +30,7 @@ public class ConnectBotApplication extends Application {
 		SecurityKeyManager securityKeyManager = SecurityKeyManager.getInstance();
 		SecurityKeyManagerConfig config = new SecurityKeyManagerConfig.Builder()
 				.setEnableDebugLogging(BuildConfig.DEBUG)
+				.setAllowUntestedUsbDevices(true)
 				.build();
 
 		securityKeyManager.init(this, config);
