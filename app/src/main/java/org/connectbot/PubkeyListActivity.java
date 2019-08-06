@@ -193,6 +193,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 				.setShowReset(false)
 				.setPreventScreenshots(!BuildConfig.DEBUG)
 				.setTitle(getString(R.string.pubkey_add_security_key))
+				.setTheme(R.style.SecurityKeyDialog)
 				.build();
 
 		SecurityKeyDialogFragment<OpenPgpSecurityKey> securityKeyDialogFragment = SecurityKeyDialogFactory.newOpenPgpInstance(options);

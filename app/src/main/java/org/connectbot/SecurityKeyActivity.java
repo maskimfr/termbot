@@ -74,6 +74,7 @@ public class SecurityKeyActivity extends AppCompatActivity implements SecurityKe
 				.setShowReset(true)
 				.setAllowKeyboard(true)
 				.setPreventScreenshots(!BuildConfig.DEBUG)
+				.setTheme(R.style.SecurityKeyDialog)
 				.build();
 
 		SecurityKeyDialogFragment<OpenPgpSecurityKey> securityKeyDialogFragment = SecurityKeyDialogFactory.newOpenPgpInstance(options);
