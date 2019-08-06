@@ -116,4 +116,9 @@
 		<item name="colorAccent">@color/accent</item>
 	</style>
 
+	<style name="SecurityKeyDialog" parent="HwSecurity.Dialog">
+		<item name="hwSecurityButtonColor">@android:color/black</item>
+		<item name="hwSecuritySurfaceColor">@color/dark_primary</item>
+	</style>
+
 </resources>
