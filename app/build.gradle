@@ -34,13 +34,7 @@ repositories {
     google()
     jcenter()
     maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local/' }
-    maven {
-        credentials {
-            username 'connectbot'
-            password '5kDV9666e2X36M9n'
-        }
-        url "https://maven.cotech.de"
-    }
+    maven { url 'https://jitpack.io' }
 }
 
 def isCi = "true" == System.getenv("CI")
@@ -257,8 +251,8 @@ dependencies {
     googleImplementation 'com.google.android.gms:play-services-basement:17.1.1'
     ossImplementation 'org.conscrypt:conscrypt-android:2.2.1'
 
-    implementation 'de.cotech:hwsecurity-openpgp:2.4.4'
-    implementation 'de.cotech:hwsecurity-ui:2.4.4'
+    implementation 'com.github.cotechde.hwsecurity:hwsecurity-openpgp:2.4.5'
+    implementation 'com.github.cotechde.hwsecurity:hwsecurity-ui:2.4.5'
 
     implementation "androidx.recyclerview:recyclerview:$supportLibraryVersion"
     implementation "androidx.legacy:legacy-support-v4:$supportLibraryVersion"
