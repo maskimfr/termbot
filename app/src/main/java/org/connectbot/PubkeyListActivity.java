@@ -38,6 +38,7 @@ import org.connectbot.util.PubkeyDatabase;
 import org.connectbot.util.PubkeyUtils;
 import org.openintents.intents.FileManagerIntents;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.trilead.ssh2.crypto.Base64;
 import com.trilead.ssh2.crypto.PEMDecoder;
 import com.trilead.ssh2.crypto.PEMStructure;
@@ -57,9 +58,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.view.KeyEvent;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import android.text.ClipboardManager;
 import android.util.Log;
@@ -102,6 +109,10 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 
 	private TerminalManager bound = null;
 
+	private WebView webViewShop;
+	private BottomSheetBehavior bottomSheetBehavior;
+
+
 	private ServiceConnection connection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -137,7 +148,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		setContentView(R.layout.act_pubkeylist);
+		setContentView(R.layout.act_pubkeylist_shop);
 
 		mListView = findViewById(R.id.list);
 		mListView.setHasFixedSize(true);
@@ -149,6 +160,99 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 		registerForContextMenu(mListView);
 
 		clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+
+		setupShop();
+	}
+
+	@SuppressLint("SetJavaScriptEnabled")
+	private void setupShop() {
+		ConstraintLayout bottomSheet = findViewById(R.id.shopBottomSheet);
+		bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+		boolean showShop = getSharedPreferences("termbot_preference", MODE_PRIVATE).getBoolean("termbot_showshop", true);
+		if (!showShop) {
+			bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+			return;
+		}
+
+		webViewShop = findViewById(R.id.shopWebView);
+		webViewShop.setWebViewClient(new WebViewClient());
+		webViewShop.getSettings().setJavaScriptEnabled(true);
+		webViewShop.loadUrl("https://shop.cotech.de/products/cotech-card");
+
+		ImageView shopImageCard = findViewById(R.id.shopImageCard);
+
+		ImageButton shopMenuButton = findViewById(R.id.shopMenuButton);
+		shopMenuButton.setOnClickListener(this::showShopMenu);
+
+		bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+			@Override
+			public void onStateChanged(@NonNull View view, int state) {
+			}
+
+			@Override
+			public void onSlide(@NonNull View view, float slideOffset) {
+				shopImageCard.setAlpha(1 - slideOffset);
+			}
+		});
+
+		View shopViewClick = findViewById(R.id.shopViewClick);
+		shopViewClick.setOnClickListener(v -> {
+			if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+				bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+			} else {
+				bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+			}
+		});
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (event.getAction() == KeyEvent.ACTION_DOWN) {
+			if (keyCode == KeyEvent.KEYCODE_BACK) {
+				if (webViewShop.canGoBack()) {
+					webViewShop.goBack();
+				} else {
+					finish();
+				}
+				return true;
+			}
+
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	public void showShopMenu(View v) {
+		PopupMenu popup = new PopupMenu(this, v);
+		popup.setOnMenuItemClickListener(item -> {
+			switch (item.getItemId()) {
+			case R.id.shopOpenInBrowser:
+				String url = "https://shop.cotech.de";
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(url));
+				startActivity(i);
+				return true;
+			case R.id.shopShare:
+				Intent sendIntent = new Intent();
+				sendIntent.setAction(Intent.ACTION_SEND);
+				sendIntent.putExtra(Intent.EXTRA_TEXT, "Get OpenPGP Cards at https://shop.cotech.de");
+				sendIntent.setType("text/plain");
+				startActivity(sendIntent);
+				return true;
+			case R.id.shopHide:
+				bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+				getSharedPreferences("termbot_preference", MODE_PRIVATE)
+						.edit()
+						.putBoolean("termbot_showshop", false)
+						.apply();
+				return true;
+			default:
+				return false;
+			}
+		});
+		MenuInflater inflater = popup.getMenuInflater();
+		inflater.inflate(R.menu.shop_menu, popup.getMenu());
+		popup.show();
 	}
 
 	@Override
@@ -337,14 +441,14 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 
 			new androidx.appcompat.app.AlertDialog.Builder(
 					PubkeyListActivity.this, R.style.AlertDialogTheme)
-				.setView(view)
-				.setPositiveButton(R.string.pubkey_unlock, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						handleAddKey(pubkey, passwordField.getText().toString());
-					}
-				})
-				.setNegativeButton(android.R.string.cancel, null).create().show();
+					.setView(view)
+					.setPositiveButton(R.string.pubkey_unlock, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							handleAddKey(pubkey, passwordField.getText().toString());
+						}
+					})
+					.setNegativeButton(android.R.string.cancel, null).create().show();
 		} else {
 			handleAddKey(pubkey, null);
 		}
@@ -639,7 +743,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 					changePasswordView.findViewById(R.id.old_password_prompt)
 							.setVisibility(pubkey.isEncrypted() ? View.VISIBLE : View.GONE);
 					new androidx.appcompat.app.AlertDialog.Builder(
-									PubkeyListActivity.this, R.style.AlertDialogTheme)
+							PubkeyListActivity.this, R.style.AlertDialogTheme)
 							.setView(changePasswordView)
 							.setPositiveButton(R.string.button_change, new DialogInterface.OnClickListener() {
 								@Override
@@ -650,8 +754,8 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 
 									if (!password1.equals(password2)) {
 										new androidx.appcompat.app.AlertDialog.Builder(
-														PubkeyListActivity.this,
-														R.style.AlertDialogTheme)
+												PubkeyListActivity.this,
+												R.style.AlertDialogTheme)
 												.setMessage(R.string.alert_passwords_do_not_match_msg)
 												.setPositiveButton(android.R.string.ok, null)
 												.create().show();
@@ -661,8 +765,8 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 									try {
 										if (!pubkey.changePassword(oldPassword, password1))
 											new androidx.appcompat.app.AlertDialog.Builder(
-															PubkeyListActivity.this,
-															R.style.AlertDialogTheme)
+													PubkeyListActivity.this,
+													R.style.AlertDialogTheme)
 													.setMessage(R.string.alert_wrong_password_msg)
 													.setPositiveButton(android.R.string.ok, null)
 													.create().show();
@@ -674,8 +778,8 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 									} catch (Exception e) {
 										Log.e(TAG, "Could not change private key password", e);
 										new androidx.appcompat.app.AlertDialog.Builder(
-														PubkeyListActivity.this,
-														R.style.AlertDialogTheme)
+												PubkeyListActivity.this,
+												R.style.AlertDialogTheme)
 												.setMessage(R.string.alert_key_corrupted_msg)
 												.setPositiveButton(android.R.string.ok, null)
 												.create().show();
@@ -741,7 +845,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 				public boolean onMenuItemClick(MenuItem item) {
 					// prompt user to make sure they really want this
 					new androidx.appcompat.app.AlertDialog.Builder(
-									PubkeyListActivity.this, R.style.AlertDialogTheme)
+							PubkeyListActivity.this, R.style.AlertDialogTheme)
 							.setMessage(getString(R.string.delete_message, pubkey.getNickname()))
 							.setPositiveButton(R.string.delete_pos, new DialogInterface.OnClickListener() {
 								@Override
@@ -833,9 +937,9 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 				pubkeyHolder.icon.setVisibility(View.VISIBLE);
 
 				if (bound.isKeyLoaded(pubkey.getNickname()))
-					pubkeyHolder.icon.setImageState(new int[] { android.R.attr.state_checked }, true);
+					pubkeyHolder.icon.setImageState(new int[] {android.R.attr.state_checked}, true);
 				else
-					pubkeyHolder.icon.setImageState(new int[] { }, true);
+					pubkeyHolder.icon.setImageState(new int[] {}, true);
 			}
 		}
 
