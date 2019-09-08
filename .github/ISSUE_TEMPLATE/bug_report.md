@@ -28,7 +28,7 @@ assignees: ''
 
  - Device: [e.g. Google Pixel 2]
  - OS: [e.g. Android 8.1 OPM1.171019.021]
- - ConnectBot Version: [e.g., 1.9.5]
+ - TermBot Version: [e.g., 1.9.5]
 
 ## Server information
 <!-- Please complete the following information): -->
