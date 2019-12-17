@@ -30,7 +30,9 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.connectbot.bean.PubkeyBean;
 import org.connectbot.service.TerminalManager;
@@ -178,7 +180,9 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 		webViewShop = findViewById(R.id.shopWebView);
 		webViewShop.setWebViewClient(new WebViewClient());
 		webViewShop.getSettings().setJavaScriptEnabled(true);
-		webViewShop.loadUrl("https://shop.cotech.de/products/cotech-card");
+		Map<String, String> headers = new HashMap<>();
+		headers.put("Referer", "https://termbot.shop.cotech.de");
+		webViewShop.loadUrl("https://shop.cotech.de/products/cotech-card", headers);
 
 		ImageView shopImageCard = findViewById(R.id.shopImageCard);
 
