@@ -109,6 +109,8 @@ android {
         debug {
             applicationIdSuffix ".debug"
             testCoverageEnabled true
+
+            multiDexEnabled true
         }
     }
 
