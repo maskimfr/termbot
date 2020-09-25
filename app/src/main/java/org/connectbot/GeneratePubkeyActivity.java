@@ -25,7 +25,6 @@ import java.security.SecureRandom;
 import java.security.Security;
 
 import org.connectbot.bean.PubkeyBean;
-import org.connectbot.util.Ed25519Provider;
 import org.connectbot.util.EntropyDialog;
 import org.connectbot.util.EntropyView;
 import org.connectbot.util.OnEntropyGatheredListener;
@@ -33,6 +32,7 @@ import org.connectbot.util.OnKeyGeneratedListener;
 import org.connectbot.util.PubkeyDatabase;
 import org.connectbot.util.PubkeyUtils;
 
+import com.trilead.ssh2.crypto.keys.Ed25519Provider;
 import com.trilead.ssh2.signature.ECDSASHA2Verify;
 
 import android.annotation.SuppressLint;
