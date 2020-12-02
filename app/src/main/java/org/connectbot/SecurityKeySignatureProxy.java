@@ -27,6 +27,7 @@ import java.util.concurrent.CountDownLatch;
 import org.connectbot.service.SecurityKeyService;
 
 import com.trilead.ssh2.auth.SignatureProxy;
+import com.trilead.ssh2.crypto.keys.Ed25519PublicKey;
 import com.trilead.ssh2.signature.ECDSASHA2Verify;
 import com.trilead.ssh2.signature.Ed25519Verify;
 import com.trilead.ssh2.signature.RSASHA1Verify;
@@ -41,7 +42,6 @@ import android.os.IBinder;
 import androidx.annotation.WorkerThread;
 import de.cotech.hw.SecurityKeyAuthenticator;
 import de.cotech.hw.ui.SecurityKeyDialogInterface;
-import net.i2p.crypto.eddsa.EdDSAPublicKey;
 
 
 public class SecurityKeySignatureProxy extends SignatureProxy {
@@ -150,7 +150,7 @@ public class SecurityKeySignatureProxy extends SignatureProxy {
 		} else if (publicKey instanceof ECPublicKey) {
 			ECPublicKey ecPublicKey = (ECPublicKey) publicKey;
 			return ECDSASHA2Verify.encodeSSHECDSASignature(ds, ecPublicKey.getParams());
-		} else if (publicKey instanceof EdDSAPublicKey) {
+		} else if (publicKey instanceof Ed25519PublicKey) {
 			return Ed25519Verify.encodeSSHEd25519Signature(ds);
 		} else {
 			throw new IOException("Unsupported algorithm in SecurityKeySignatureProxy!");

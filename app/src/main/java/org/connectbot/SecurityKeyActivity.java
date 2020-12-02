@@ -33,7 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import de.cotech.hw.SecurityKeyAuthenticator;
 import de.cotech.hw.openpgp.OpenPgpSecurityKey;
 import de.cotech.hw.secrets.PinProvider;
-import de.cotech.hw.ui.SecurityKeyDialogFactory;
+import de.cotech.hw.openpgp.OpenPgpSecurityKeyDialogFragment;
 import de.cotech.hw.ui.SecurityKeyDialogFragment;
 import de.cotech.hw.ui.SecurityKeyDialogInterface;
 import de.cotech.hw.ui.SecurityKeyDialogOptions;
@@ -77,7 +77,7 @@ public class SecurityKeyActivity extends AppCompatActivity implements SecurityKe
 				.setTheme(R.style.SecurityKeyDialog)
 				.build();
 
-		SecurityKeyDialogFragment<OpenPgpSecurityKey> securityKeyDialogFragment = SecurityKeyDialogFactory.newOpenPgpInstance(options);
+		SecurityKeyDialogFragment<OpenPgpSecurityKey> securityKeyDialogFragment = OpenPgpSecurityKeyDialogFragment.newInstance(options);
 		securityKeyDialogFragment.show(getSupportFragmentManager());
 	}
 
