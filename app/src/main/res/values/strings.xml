@@ -686,7 +686,4 @@
 	<string name="key_attribute_encrypted">(encrypted)</string>
 	<string name="key_attribute_hardware">(on hardware security key)</string>
 
-	<string name="termbot_firstrun_title">Important Changes</string>
-	<string name="termbot_firstrun_message">"This new version of TermBot does not require OpenKeychain anymore!\n\nPlease follow these steps:\n1. Re-add your security keys via the new button in the 'Manage Pubkeys' screen in TermBot.\n2. Long-press the host and select 'Edit host'.\n3. Select your specific security key at 'Use pubkey authentication'."</string>
-	<string name="termbot_firstrun_button">Got It!</string>
 </resources>
