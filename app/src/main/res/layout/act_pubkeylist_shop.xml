@@ -9,6 +9,6 @@
 	<include layout="@layout/act_pubkeylist"/>
 
 	<!-- include bottom sheet -->
-	<include layout="@layout/bottom_sheet_shop"/>
+	<include layout="@layout/bottom_sheet_web"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

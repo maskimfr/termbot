@@ -73,6 +73,7 @@ public class SecurityKeyActivity extends AppCompatActivity implements SecurityKe
 				.setTitle(title)
 				.setShowReset(true)
 				.setAllowKeyboard(true)
+				.setShowSdkLogo(true)
 				.setPreventScreenshots(!BuildConfig.DEBUG)
 				.setTheme(R.style.SecurityKeyDialog)
 				.build();

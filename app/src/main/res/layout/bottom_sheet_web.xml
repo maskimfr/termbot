@@ -12,54 +12,56 @@
 	app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
 	<View
-		android:id="@+id/shopViewCorners"
+		android:id="@+id/webViewCorners"
 		android:layout_width="match_parent"
 		android:layout_height="80dp"
-		android:background="@drawable/shop_bottom_sheet_rounded_corners"
+		android:background="@drawable/web_bottom_sheet_rounded_corners"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"/>
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<TextView
-		android:id="@+id/shopTextBuy"
+		android:id="@+id/webText"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="8dp"
 		android:layout_marginLeft="24dp"
 		android:layout_marginStart="24dp"
 		android:layout_marginTop="8dp"
-		android:text="Buy OpenPGP Card"
+		android:text="Get the Hardware Security SDK"
 		android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
 		android:textColor="@android:color/black"
-		app:layout_constraintBottom_toTopOf="@+id/shopWebViewScroll"
+		app:layout_constraintBottom_toTopOf="@+id/webViewScroll"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="@+id/shopViewCorners"/>
+		app:layout_constraintTop_toTopOf="@+id/webViewCorners"/>
 
 	<ImageView
-		android:id="@+id/shopImageCard"
+		android:id="@+id/webImageCard"
 		android:layout_width="0dp"
-		android:layout_height="118dp"
+		android:layout_height="0dp"
+		android:layout_marginBottom="8dp"
 		android:layout_marginEnd="8dp"
 		android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"
 		android:layout_marginStart="8dp"
 		android:layout_marginTop="8dp"
-		app:layout_constraintEnd_toStartOf="@+id/shopMenuButton"
-		app:layout_constraintStart_toEndOf="@+id/shopTextBuy"
+		app:layout_constraintBottom_toBottomOf="@+id/webViewCorners"
+		app:layout_constraintEnd_toStartOf="@+id/webMenuButton"
+		app:layout_constraintStart_toEndOf="@+id/webText"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@drawable/shop_cotech_card_front"/>
+		app:srcCompat="@drawable/web_hwsecurity_sdk_url_logo" />
 
 	<View
-		android:id="@+id/shopViewShade"
+		android:id="@+id/webViewShade"
 		android:layout_width="match_parent"
 		android:layout_height="2dp"
-		android:background="@drawable/shop_shade"
-		app:layout_constraintBottom_toTopOf="@+id/shopWebViewScroll"
-		app:layout_constraintEnd_toEndOf="@+id/shopViewCorners"
+		android:background="@drawable/web_shade"
+		app:layout_constraintBottom_toTopOf="@+id/webViewScroll"
+		app:layout_constraintEnd_toEndOf="@+id/webViewCorners"
 		app:layout_constraintStart_toStartOf="parent"/>
 
 	<View
-		android:id="@+id/shopViewClick"
+		android:id="@+id/webViewClick"
 		android:layout_width="match_parent"
 		android:layout_height="80dp"
 		android:background="@android:color/transparent"
@@ -68,24 +70,24 @@
 		app:layout_constraintTop_toTopOf="parent"/>
 
 	<androidx.core.widget.NestedScrollView
-		android:id="@+id/shopWebViewScroll"
+		android:id="@+id/webViewScroll"
 		android:layout_width="0dp"
 		android:layout_height="0dp"
 		android:gravity="center"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/shopViewCorners">
+		app:layout_constraintTop_toBottomOf="@+id/webViewCorners">
 
 		<WebView
-			android:id="@+id/shopWebView"
+			android:id="@+id/webView"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"/>
 
 	</androidx.core.widget.NestedScrollView>
 
 	<ImageButton
-		android:id="@+id/shopMenuButton"
+		android:id="@+id/webMenuButton"
 		android:layout_width="32dp"
 		android:layout_height="48dp"
 		android:layout_marginEnd="16dp"
@@ -95,6 +97,6 @@
 		android:contentDescription="Shop Menu"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@drawable/shop_ic_more_vert_black_24dp"/>
+		app:srcCompat="@drawable/web_ic_more_vert_black_24dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

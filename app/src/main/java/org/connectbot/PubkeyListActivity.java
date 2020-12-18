@@ -30,9 +30,7 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventListener;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.connectbot.bean.PubkeyBean;
 import org.connectbot.service.TerminalManager;
@@ -111,7 +109,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 
 	private TerminalManager bound = null;
 
-	private WebView webViewShop;
+	private WebView webView;
 	private BottomSheetBehavior bottomSheetBehavior;
 
 
@@ -177,16 +175,16 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 			return;
 		}
 
-		webViewShop = findViewById(R.id.shopWebView);
-		webViewShop.setWebViewClient(new WebViewClient());
-		webViewShop.getSettings().setJavaScriptEnabled(true);
-		Map<String, String> headers = new HashMap<>();
-		headers.put("Referer", "https://termbot.shop.cotech.de");
-		webViewShop.loadUrl("https://shop.cotech.de/products/cotech-card", headers);
+		webView = findViewById(R.id.webView);
+		webView.setWebViewClient(new WebViewClient());
+		webView.getSettings().setJavaScriptEnabled(true);
+		String packageName = getPackageName();
+		String url = "https://hwsecurity.dev/?pk_campaign=sdk&pk_source=" + packageName;
+		webView.loadUrl(url);
 
-		ImageView shopImageCard = findViewById(R.id.shopImageCard);
+		ImageView shopImageCard = findViewById(R.id.webImageCard);
 
-		ImageButton shopMenuButton = findViewById(R.id.shopMenuButton);
+		ImageButton shopMenuButton = findViewById(R.id.webMenuButton);
 		shopMenuButton.setOnClickListener(this::showShopMenu);
 
 		bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -200,7 +198,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 			}
 		});
 
-		View shopViewClick = findViewById(R.id.shopViewClick);
+		View shopViewClick = findViewById(R.id.webViewClick);
 		shopViewClick.setOnClickListener(v -> {
 			if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
 				bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -214,8 +212,8 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			if (keyCode == KeyEvent.KEYCODE_BACK) {
-				if (webViewShop.canGoBack()) {
-					webViewShop.goBack();
+				if (webView.canGoBack()) {
+					webView.goBack();
 				} else {
 					finish();
 				}
@@ -299,6 +297,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 		SecurityKeyDialogOptions options = SecurityKeyDialogOptions.builder()
 				.setPinMode(SecurityKeyDialogOptions.PinMode.NO_PIN_INPUT)
 				.setShowReset(false)
+				.setShowSdkLogo(true)
 				.setPreventScreenshots(!BuildConfig.DEBUG)
 				.setTitle(getString(R.string.pubkey_add_security_key))
 				.setTheme(R.style.SecurityKeyDialog)
