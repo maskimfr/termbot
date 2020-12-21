@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 	<item
-		android:id="@+id/shopOpenInBrowser"
+		android:id="@+id/webOpenInBrowser"
 		android:orderInCategory="100"
 		android:title="Open with…"
 		app:showAsAction="never"/>
 	<item
-		android:id="@+id/shopShare"
+		android:id="@+id/webShare"
 		android:orderInCategory="100"
 		android:title="Share with…"
 		app:showAsAction="never"/>
 	<item
-		android:id="@+id/shopHide"
+		android:id="@+id/webHide"
 		android:orderInCategory="100"
 		android:title="Don't show this again!"
 		app:showAsAction="never"/>

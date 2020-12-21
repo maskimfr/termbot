@@ -228,20 +228,21 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 		PopupMenu popup = new PopupMenu(this, v);
 		popup.setOnMenuItemClickListener(item -> {
 			switch (item.getItemId()) {
-			case R.id.shopOpenInBrowser:
-				String url = "https://shop.cotech.de";
+			case R.id.webOpenInBrowser:
+				String packageName = getPackageName();
+				String url = "https://hwsecurity.dev/?pk_campaign=sdk&pk_source=" + packageName;
 				Intent i = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse(url));
 				startActivity(i);
 				return true;
-			case R.id.shopShare:
+			case R.id.webShare:
 				Intent sendIntent = new Intent();
 				sendIntent.setAction(Intent.ACTION_SEND);
-				sendIntent.putExtra(Intent.EXTRA_TEXT, "Get OpenPGP Cards at https://shop.cotech.de");
+				sendIntent.putExtra(Intent.EXTRA_TEXT, "Get the Hardware Security SDK at https://hwsecurity.dev");
 				sendIntent.setType("text/plain");
 				startActivity(sendIntent);
 				return true;
-			case R.id.shopHide:
+			case R.id.webHide:
 				bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 				getSharedPreferences("termbot_preference", MODE_PRIVATE)
 						.edit()
@@ -253,7 +254,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 			}
 		});
 		MenuInflater inflater = popup.getMenuInflater();
-		inflater.inflate(R.menu.shop_menu, popup.getMenu());
+		inflater.inflate(R.menu.web_menu, popup.getMenu());
 		popup.show();
 	}
 
