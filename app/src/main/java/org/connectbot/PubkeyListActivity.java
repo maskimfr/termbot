@@ -63,7 +63,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -82,8 +81,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import de.cotech.hw.openpgp.OpenPgpSecurityKey;
-import de.cotech.hw.secrets.PinProvider;
+import de.cotech.hw.openpgp.pairedkey.PairedSecurityKey;
 import de.cotech.hw.ui.SecurityKeyDialogInterface;
 import de.cotech.hw.ui.SecurityKeyDialogOptions;
 import de.cotech.hw.openpgp.OpenPgpSecurityKeyDialogFragment;
@@ -95,8 +95,7 @@ import de.cotech.hw.ui.SecurityKeyDialogFragment;
  *
  * @author Kenny Root
  */
-public class PubkeyListActivity extends AppCompatListActivity
-		implements EventListener, SecurityKeyDialogFragment.SecurityKeyDialogCallback<OpenPgpSecurityKey>, PubkeyAddBottomSheetDialog.PubkeyAddBottomSheetListener {
+public class PubkeyListActivity extends AppCompatListActivity implements EventListener, PubkeyAddBottomSheetDialog.PubkeyAddBottomSheetListener {
 	public final static String TAG = "CB.PubkeyListActivity";
 
 	private static final int MAX_KEYFILE_SIZE = 32768;
@@ -295,7 +294,7 @@ public class PubkeyListActivity extends AppCompatListActivity
 
 	@Override
 	public void onBottomSheetSetupSecurityKey(OpenPgpSecurityKey.AlgorithmConfig algorithmConfig) {
-		// TODO
+		setupSecurityKey(algorithmConfig);
 	}
 
 	private boolean importExistingKey() {
@@ -310,28 +309,63 @@ public class PubkeyListActivity extends AppCompatListActivity
 		}
 	}
 
-	private void addSecurityKey() {
-		SecurityKeyDialogOptions options = SecurityKeyDialogOptions.builder()
-				.setPinMode(SecurityKeyDialogOptions.PinMode.NO_PIN_INPUT)
-				.setShowReset(false)
-				.setShowSdkLogo(true)
-				.setPreventScreenshots(!BuildConfig.DEBUG)
-				.setTitle(getString(R.string.pubkey_add_security_key))
-				.setTheme(R.style.SecurityKeyDialog)
-				.build();
+    private void addSecurityKey() {
+        SecurityKeyDialogOptions options = SecurityKeyDialogOptions.builder()
+                .setPinMode(SecurityKeyDialogOptions.PinMode.NO_PIN_INPUT)
+                .setShowReset(true)
+                .setShowSdkLogo(true)
+                .setPreventScreenshots(!BuildConfig.DEBUG)
+                .setTitle(getString(R.string.pubkey_add_security_key))
+                .setTheme(R.style.SecurityKeyDialog)
+                .build();
 
-		SecurityKeyDialogFragment<OpenPgpSecurityKey> securityKeyDialogFragment = OpenPgpSecurityKeyDialogFragment.newInstance(options);
-		securityKeyDialogFragment.show(getSupportFragmentManager());
-	}
+        SecurityKeyDialogFragment<OpenPgpSecurityKey> securityKeyDialogFragment = OpenPgpSecurityKeyDialogFragment.newInstance(options);
+        securityKeyDialogFragment.setSecurityKeyDialogCallback((SecurityKeyDialogInterface.SecurityKeyDialogCallback<OpenPgpSecurityKey>) (securityKeyDialogInterface, openPgpSecurityKey, pinProvider) -> {
+            new Thread(() -> {
+                try {
+                    PublicKey publicKey = openPgpSecurityKey.retrieveAuthenticationPublicKey();
+                    String nickname = openPgpSecurityKey.getSecurityKeyName() + " (" + openPgpSecurityKey.getSerialNumber() + ")";
 
-	@Override
-	public void onSecurityKeyDialogDiscovered(@NonNull SecurityKeyDialogInterface dialogInterface,
-			@NonNull OpenPgpSecurityKey openPgpSecurityKey, @Nullable PinProvider pinProvider) throws IOException {
-		@SuppressLint("WrongThread") PublicKey publicKey = openPgpSecurityKey.retrieveAuthenticationPublicKey();
-		String nickname = openPgpSecurityKey.getSecurityKeyName() + " (" + openPgpSecurityKey.getSerialNumber() + ")";
-		dialogInterface.dismiss();
-		addSecurityKey(publicKey, nickname);
-	}
+                    securityKeyDialogFragment.postRunnable(() -> {
+                        securityKeyDialogInterface.successAndDismiss();
+                        addSecurityKey(publicKey, nickname);
+                    });
+                } catch (IOException e) {
+                    securityKeyDialogFragment.postError(e);
+                }
+            }).start();
+        });
+        securityKeyDialogFragment.show(getSupportFragmentManager());
+    }
+
+    private void setupSecurityKey(OpenPgpSecurityKey.AlgorithmConfig algorithmConfig) {
+        SecurityKeyDialogOptions options = SecurityKeyDialogOptions.builder()
+                .setPinMode(SecurityKeyDialogOptions.PinMode.SETUP)
+                .setShowSdkLogo(true)
+                .setPreventScreenshots(!BuildConfig.DEBUG)
+                .setTitle(getString(R.string.pubkey_setup_security_key))
+                .setTheme(R.style.SecurityKeyDialog)
+                .build();
+
+        SecurityKeyDialogFragment<OpenPgpSecurityKey> securityKeyDialogFragment = OpenPgpSecurityKeyDialogFragment.newInstance(options);
+        securityKeyDialogFragment.setSecurityKeyDialogCallback((SecurityKeyDialogInterface.SecurityKeyDialogCallback<OpenPgpSecurityKey>) (securityKeyDialogInterface, openPgpSecurityKey, pinProvider) -> {
+            new Thread(() -> {
+                try {
+                    PairedSecurityKey pairedSecurityKey = openPgpSecurityKey.setupPairedKey(pinProvider, algorithmConfig);
+                    PublicKey publicKey = pairedSecurityKey.getAuthPublicKey();
+                    String nickname = openPgpSecurityKey.getSecurityKeyName() + " (" + openPgpSecurityKey.getSerialNumber() + ")";
+
+                    securityKeyDialogFragment.postRunnable(() -> {
+                        securityKeyDialogInterface.successAndDismiss();
+                        addSecurityKey(publicKey, nickname);
+                    });
+                } catch (IOException e) {
+                    securityKeyDialogFragment.postError(e);
+                }
+            }).start();
+        });
+        securityKeyDialogFragment.show(getSupportFragmentManager());
+    }
 
 	private void addSecurityKey(PublicKey publicKey, String nickname) {
 		PubkeyBean pubkey = new PubkeyBean();
