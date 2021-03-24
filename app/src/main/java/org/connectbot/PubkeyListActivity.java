@@ -323,7 +323,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
         securityKeyDialogFragment.setSecurityKeyDialogCallback((SecurityKeyDialogInterface.SecurityKeyDialogCallback<OpenPgpSecurityKey>) (securityKeyDialogInterface, openPgpSecurityKey, pinProvider) -> {
             new Thread(() -> {
                 try {
-                    PublicKey publicKey = openPgpSecurityKey.retrieveAuthenticationPublicKey();
+                    PublicKey publicKey = SecurityKey25519Converter.hwsecurityToConnectbot(openPgpSecurityKey.retrieveAuthenticationPublicKey());
                     String nickname = openPgpSecurityKey.getSecurityKeyName() + " (" + openPgpSecurityKey.getSerialNumber() + ")";
 
                     securityKeyDialogFragment.postRunnable(() -> {
@@ -352,7 +352,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
             new Thread(() -> {
                 try {
                     PairedSecurityKey pairedSecurityKey = openPgpSecurityKey.setupPairedKey(pinProvider, algorithmConfig);
-                    PublicKey publicKey = pairedSecurityKey.getAuthPublicKey();
+                    PublicKey publicKey = SecurityKey25519Converter.hwsecurityToConnectbot(pairedSecurityKey.getAuthPublicKey());
                     String nickname = openPgpSecurityKey.getSecurityKeyName() + " (" + openPgpSecurityKey.getSerialNumber() + ")";
 
                     securityKeyDialogFragment.postRunnable(() -> {
