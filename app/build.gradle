@@ -251,8 +251,8 @@ dependencyUpdates {
 // Dependencies must be below the android block to allow productFlavor specific deps.
 dependencies {
     // added by Termbot
-    implementation 'com.github.cotechde.hwsecurity:hwsecurity-openpgp:4.2.1'
-    implementation 'com.github.cotechde.hwsecurity:hwsecurity-ui:4.2.1'
+    implementation 'com.github.cotechde.hwsecurity:hwsecurity-openpgp:4.4.0'
+    implementation 'com.github.cotechde.hwsecurity:hwsecurity-ui:4.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
 
