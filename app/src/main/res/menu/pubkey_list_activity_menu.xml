@@ -27,17 +27,4 @@
 		connectbot:showAsAction="ifRoom"
 		/>
 
-	<item android:id="@+id/import_existing_key_icon"
-		android:icon="@drawable/ic_folder_open"
-		android:title="@string/pubkey_import_existing"
-		connectbot:showAsAction="ifRoom"
-		/>
-
-	<item android:id="@+id/add_security_key_icon"
-		android:icon="@drawable/ic_usb_nfc_security_key_plus"
-		android:title="@string/pubkey_add_security_key"
-		connectbot:iconTint="#fff"
-		connectbot:showAsAction="ifRoom"
-		/>
-
 </menu>

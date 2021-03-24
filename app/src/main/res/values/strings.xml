@@ -653,7 +653,9 @@
 	<!-- Text for button which, when clicked, brings up picker to import an existing pubkey. -->
 	<string name="pubkey_import_existing">Import existing pubkey</string>
 	<!-- Text for button which, when clicked, brings up dialog to add security key. -->
-	<string name="pubkey_add_security_key">Add OpenPGP hardware security key</string>
+	<string name="pubkey_add_security_key">Add OpenPGP security key</string>
+	<!-- Text for button which, when clicked, brings up dialog to setup a security key. -->
+	<string name="pubkey_setup_security_key">Setup key with</string>
 	<!-- Text for dialog which explains that the host URI is invalid and asks to discard. -->
 	<string name="discard_host_changes_message">Host URI is invalid. Would you like to discard changes?</string>
 	<!-- Text for button which discards changes to the host. -->

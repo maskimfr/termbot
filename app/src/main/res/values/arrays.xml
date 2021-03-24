@@ -121,4 +121,12 @@
 		<item>backspace</item>
 	</string-array>
 
+	<string-array name="securitykey_setup_spinner">
+		<item>Curve 25519</item>
+		<item>ECC P-256</item>
+		<item>ECC P-384</item>
+		<item>ECC P-521</item>
+		<item>RSA 2048</item>
+	</string-array>
+
 </resources>

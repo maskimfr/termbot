@@ -95,7 +95,8 @@ import de.cotech.hw.ui.SecurityKeyDialogFragment;
  *
  * @author Kenny Root
  */
-public class PubkeyListActivity extends AppCompatListActivity implements EventListener, SecurityKeyDialogFragment.SecurityKeyDialogCallback<OpenPgpSecurityKey> {
+public class PubkeyListActivity extends AppCompatListActivity
+		implements EventListener, SecurityKeyDialogFragment.SecurityKeyDialogCallback<OpenPgpSecurityKey>, PubkeyAddBottomSheetDialog.PubkeyAddBottomSheetListener {
 	public final static String TAG = "CB.PubkeyListActivity";
 
 	private static final int MAX_KEYFILE_SIZE = 32768;
@@ -269,17 +270,32 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.add_new_key_icon:
-			startActivity(new Intent(this, GeneratePubkeyActivity.class));
-			return true;
-		case R.id.import_existing_key_icon:
-			importExistingKey();
-			return true;
-		case R.id.add_security_key_icon:
-			addSecurityKey();
+			PubkeyAddBottomSheetDialog addDialog = PubkeyAddBottomSheetDialog.newInstance();
+			addDialog.show(getSupportFragmentManager(), PubkeyAddBottomSheetDialog.TAG);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public void onBottomSheetAddKey() {
+		startActivity(new Intent(this, GeneratePubkeyActivity.class));
+	}
+
+	@Override
+	public void onBottomSheetImportKey() {
+		importExistingKey();
+	}
+
+	@Override
+	public void onBottomSheetAddSecurityKey() {
+		addSecurityKey();
+	}
+
+	@Override
+	public void onBottomSheetSetupSecurityKey(OpenPgpSecurityKey.AlgorithmConfig algorithmConfig) {
+		// TODO
 	}
 
 	private boolean importExistingKey() {

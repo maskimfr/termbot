@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/accent"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/bottomsheet_generate_key"
+        style="@style/SecurityKeySheetActionItem"
+        android:layout_marginTop="8dp"
+        android:text="@string/pubkey_add_new"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:drawableLeftCompat="@drawable/ic_add_box"
+        app:drawableStartCompat="@drawable/ic_add_box" />
+
+    <TextView
+        android:id="@+id/bottomsheet_import_existing_key"
+        style="@style/SecurityKeySheetActionItem"
+        android:text="@string/pubkey_import_existing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottomsheet_generate_key"
+        app:drawableLeftCompat="@drawable/ic_folder_open"
+        app:drawableStartCompat="@drawable/ic_folder_open" />
+
+    <TextView
+        android:id="@+id/bottomsheet_add_openpgp_security_key"
+        style="@style/SecurityKeySheetActionItem"
+        android:text="@string/pubkey_add_security_key"
+        app:drawableTint="#fff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottomsheet_import_existing_key"
+        app:drawableLeftCompat="@drawable/ic_usb_nfc_security_key_plus"
+        app:drawableStartCompat="@drawable/ic_usb_nfc_security_key_plus" />
+
+    <TextView
+        android:id="@+id/bottomsheet_setup_openpgp_security_key"
+        style="@style/SecurityKeySheetActionItem"
+        android:text="@string/pubkey_setup_security_key"
+        app:drawableLeftCompat="@drawable/ic_usb_nfc_security_key"
+        app:drawableStartCompat="@drawable/ic_usb_nfc_security_key"
+        app:drawableTint="#fff"
+        app:layout_constraintEnd_toStartOf="@+id/bottomsheet_setup_openpgp_security_key_spinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottomsheet_add_openpgp_security_key" />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/bottomsheet_setup_openpgp_security_key_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/securitykey_setup_spinner"
+        android:popupBackground="@color/accent"
+        app:layout_constraintBottom_toBottomOf="@+id/bottomsheet_setup_openpgp_security_key"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bottomsheet_setup_openpgp_security_key"
+        app:tint="#fff" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
