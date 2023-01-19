@@ -31,7 +31,6 @@ import org.connectbot.util.PreferenceConstants;
 import org.connectbot.util.TerminalViewPager;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -44,7 +43,6 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -88,7 +86,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import de.mud.terminal.vt320;
 
 public class ConsoleActivity extends AppCompatActivity implements BridgeDisconnectedListener {
@@ -135,11 +132,15 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 
 	private Animation keyboard_fade_in, keyboard_fade_out;
 
-	private MenuItem disconnect, copy, paste, portForward, resize, urlscan;
+	private MenuItem disconnect;
+	private MenuItem paste;
+	private MenuItem portForward;
+	private MenuItem resize;
+	private MenuItem urlscan;
 
 	private boolean forcedOrientation;
 
-	private Handler handler = new Handler();
+	private final Handler handler = new Handler();
 
 	private View contentView;
 
@@ -150,7 +151,7 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 	private boolean titleBarHide;
 	private boolean keyboardAlwaysVisible = false;
 
-	private ServiceConnection connection = new ServiceConnection() {
+	private final ServiceConnection connection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			bound = ((TerminalManager.TerminalBinder) service).getService();
@@ -165,7 +166,7 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 			// If we didn't find the requested connection, try opening it
 			if (requestedNickname != null && requestedBridge == null) {
 				try {
-					Log.d(TAG, String.format("We couldnt find an existing bridge with URI=%s (nickname=%s), so creating one now", requested.toString(), requestedNickname));
+					Log.d(TAG, String.format("We couldn't find an existing bridge with URI=%s (nickname=%s), so creating one now", requested.toString(), requestedNickname));
 					requestedBridge = bound.openConnection(requested);
 				} catch (Exception e) {
 					Log.e(TAG, "Problem while trying to create new requested bridge from URI", e);
@@ -232,8 +233,8 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 	 * Handle repeatable virtual keys and touch events
 	 */
 	public class KeyRepeater implements Runnable, OnTouchListener, OnClickListener {
-		private View mView;
-		private Handler mHandler;
+		private final View mView;
+		private final Handler mHandler;
 		private boolean mDown;
 
 		public KeyRepeater(Handler handler, View view) {
@@ -405,7 +406,17 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 		// If we just closed the last bridge, go back to the previous activity.
 		if (pager.getChildCount() == 0) {
 			finish();
+			unregisterMenuListeners();
 		}
+	}
+
+	private void unregisterMenuListeners() {
+		portForward.setOnMenuItemClickListener(null);
+		disconnect.setOnMenuItemClickListener(null);
+		paste.setOnMenuItemClickListener(null);
+		portForward.setOnMenuItemClickListener(null);
+		resize.setOnMenuItemClickListener(null);
+		urlscan.setOnMenuItemClickListener(null);
 	}
 
 	protected View findCurrentView(int id) {
@@ -470,7 +481,6 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 		hideActionBarIfRequested();
 	}
 
-	@TargetApi(11)
 	private void requestActionBar() {
 		supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 	}
@@ -479,9 +489,7 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			StrictModeSetup.run();
-		}
+		StrictModeSetup.run();
 
 		hardKeyboard = getResources().getConfiguration().keyboard ==
 				Configuration.KEYBOARD_QWERTY;
@@ -490,7 +498,7 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		titleBarHide = prefs.getBoolean(PreferenceConstants.TITLEBARHIDE, false);
-		if (titleBarHide && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+		if (titleBarHide) {
 			// This is a separate method because Gradle does not uniformly respect the conditional
 			// Build check. See: https://code.google.com/p/android/issues/detail?id=137195
 			requestActionBar();
@@ -848,23 +856,6 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 			}
 		});
 
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-			copy = menu.add(R.string.console_menu_copy);
-			if (hardKeyboard)
-				copy.setAlphabeticShortcut('c');
-			MenuItemCompat.setShowAsAction(copy, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-			copy.setIcon(R.drawable.ic_action_copy);
-			copy.setEnabled(activeTerminal);
-			copy.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-				@Override
-				public boolean onMenuItemClick(MenuItem item) {
-					adapter.getCurrentTerminalView().startPreHoneycombCopyMode();
-					Toast.makeText(ConsoleActivity.this, getString(R.string.console_copy_start), Toast.LENGTH_LONG).show();
-					return true;
-				}
-			});
-		}
-
 		paste = menu.add(R.string.console_menu_paste);
 		if (hardKeyboard)
 			paste.setAlphabeticShortcut('v');
@@ -992,9 +983,6 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 		else
 			disconnect.setTitle(R.string.console_menu_close);
 
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-			copy.setEnabled(activeTerminal);
-		}
 		paste.setEnabled(activeTerminal);
 		portForward.setEnabled(sessionOpen && canForwardPorts);
 		urlscan.setEnabled(activeTerminal);
@@ -1195,7 +1183,7 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 	}
 
 	private static class URLItemListener implements OnItemClickListener {
-		private WeakReference<Context> contextRef;
+		private final WeakReference<Context> contextRef;
 
 		URLItemListener(Context context) {
 			this.contextRef = new WeakReference<>(context);
@@ -1228,14 +1216,11 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 
 		Log.d(TAG, String.format("onConfigurationChanged; requestedOrientation=%d, newConfig.orientation=%d", getRequestedOrientation(), newConfig.orientation));
 		if (bound != null) {
-			if (forcedOrientation &&
-					((newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE &&
-							getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) ||
-					(newConfig.orientation != Configuration.ORIENTATION_PORTRAIT &&
-							getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)))
-				bound.setResizeAllowed(false);
-			else
-				bound.setResizeAllowed(true);
+			bound.setResizeAllowed(!forcedOrientation ||
+					((newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ||
+							getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) &&
+							(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT ||
+									getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)));
 
 			bound.hardKeyboardHidden = (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES);
 

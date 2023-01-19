@@ -29,7 +29,6 @@ import org.connectbot.util.PreferenceConstants;
 import org.connectbot.util.TerminalTextViewOverlay;
 import org.connectbot.util.TerminalViewPager;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -47,7 +46,6 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.view.GestureDetector;
@@ -77,10 +75,10 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 	private final Context context;
 	public final TerminalBridge bridge;
 
-	private TerminalTextViewOverlay terminalTextViewOverlay;
+	private final TerminalTextViewOverlay terminalTextViewOverlay;
 	public final TerminalViewPager viewPager;
-	private GestureDetector gestureDetector;
-	private SharedPreferences prefs;
+	private final GestureDetector gestureDetector;
+	private final SharedPreferences prefs;
 
 	// These are only used for pre-Honeycomb copying.
 	private int lastTouchedRow, lastTouchedCol;
@@ -93,9 +91,12 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 	private final Paint cursorMetaInversionPaint;
 
 	// Cursor paints to distinguish modes
-	private Path ctrlCursor, altCursor, shiftCursor;
-	private RectF tempSrc, tempDst;
-	private Matrix scaleMatrix;
+	private final Path ctrlCursor;
+	private final Path altCursor;
+	private final Path shiftCursor;
+	private final RectF tempSrc;
+	private final RectF tempDst;
+	private final Matrix scaleMatrix;
 	private static final Matrix.ScaleToFit scaleType = Matrix.ScaleToFit.FILL;
 
 	private Toast notification = null;
@@ -111,7 +112,7 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 	private Matcher mCodeMatcher = null;
 	private AccessibilityEventSender mEventSender = null;
 
-	private char[] singleDeadKey = new char[1];
+	private final char[] singleDeadKey = new char[1];
 
 	private static final String BACKSPACE_CODE = "\\x08\\x1b\\[K";
 	private static final String CONTROL_CODE_PATTERN = "\\x1b\\[K[^m]+[m|:]";
@@ -138,9 +139,7 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 		// so this is using software rendering until we can replace all the
 		// instances.
 		// See: https://developer.android.com/guide/topics/graphics/hardware-accel.html#unsupported
-		if (Build.VERSION.SDK_INT >= 11) {
-			setLayerTypeToSoftware();
-		}
+		setLayerTypeToSoftware();
 
 		paint = new Paint();
 
@@ -199,15 +198,13 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 		// connect our view up to the bridge
 		setOnKeyListener(bridge.getKeyHandler());
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			terminalTextViewOverlay = new TerminalTextViewOverlay(context, this);
-			terminalTextViewOverlay.setLayoutParams(
-					new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-			addView(terminalTextViewOverlay, 0);
+		terminalTextViewOverlay = new TerminalTextViewOverlay(context, this);
+		terminalTextViewOverlay.setLayoutParams(
+				new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		addView(terminalTextViewOverlay, 0);
 
-			// Once terminalTextViewOverlay is active, allow it to handle key events instead.
-			terminalTextViewOverlay.setOnKeyListener(bridge.getKeyHandler());
-		}
+		// Once terminalTextViewOverlay is active, allow it to handle key events instead.
+		terminalTextViewOverlay.setOnKeyListener(bridge.getKeyHandler());
 
 		clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -219,7 +216,7 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 
 		gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
 			// Only used for pre-Honeycomb devices.
-			private TerminalBridge bridge = TerminalView.this.bridge;
+			private final TerminalBridge bridge = TerminalView.this.bridge;
 			private float totalY = 0;
 
 			/**
@@ -253,7 +250,7 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 							totalY = 0;
 						}
 						return true;
-					} else if (terminalTextViewOverlay == null && moved != 0) {
+					} else if (moved != 0) {
 						int base = bridge.buffer.getWindowBase();
 						bridge.buffer.setWindowBase(base + moved);
 						totalY = 0;
@@ -275,7 +272,6 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 		new AccessibilityStateTester().execute((Void) null);
 	}
 
-	@TargetApi(11)
 	private void setLayerTypeToSoftware() {
 		setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 	}
@@ -364,21 +360,6 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 		}
 
 		return super.onTouchEvent(event);
-	}
-
-	/**
-	 * Only intended for pre-Honeycomb devices.
-	 */
-	public void startPreHoneycombCopyMode() {
-		// mark as copying and reset any previous bounds
-		SelectionArea area = bridge.getSelectionArea();
-		area.reset();
-		area.setBounds(bridge.buffer.getColumns(), bridge.buffer.getRows());
-
-		bridge.setSelectingForCopy(true);
-
-		// Make sure we show the initial selection
-		bridge.redraw();
 	}
 
 	@Override
@@ -557,7 +538,11 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 			EditorInfo.IME_FLAG_NO_EXTRACT_UI |
 			EditorInfo.IME_FLAG_NO_ENTER_ACTION |
 			EditorInfo.IME_ACTION_NONE;
-		outAttrs.inputType = EditorInfo.TYPE_NULL;
+		// Turn off suggestions
+		outAttrs.inputType = EditorInfo.TYPE_NULL |
+				EditorInfo.TYPE_TEXT_VARIATION_PASSWORD |
+				EditorInfo.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD |
+				EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
 		return new BaseInputConnection(this, false) {
 			@Override
 			public boolean deleteSurroundingText (int leftLength, int rightLength) {

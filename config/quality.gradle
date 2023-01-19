@@ -1,16 +1,15 @@
 apply plugin: 'checkstyle'
 
 checkstyle {
-    toolVersion = '8.10'
-    configDir = rootProject.file('config/quality/checkstyle')
+	toolVersion = '8.10'
 }
 
 check.dependsOn 'checkstyle'
 
 task checkstyle(type: Checkstyle) {
-    source 'src/main/java'
-    include 'org/connectbot/**/*.java'
-    exclude '**/gen/**'
+	source 'src/main/java'
+	include 'org/connectbot/**/*.java'
+	exclude '**/gen/**'
 
-    classpath = files()
+	classpath = files()
 }
