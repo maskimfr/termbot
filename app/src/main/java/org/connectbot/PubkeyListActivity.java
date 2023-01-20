@@ -27,6 +27,9 @@ import java.io.InputStreamReader;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventListener;
@@ -82,6 +85,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import de.cotech.hw.SecurityKeyAuthenticator;
+import de.cotech.hw.piv.PivKeyReference;
+import de.cotech.hw.piv.PivSecurityKey;
+import de.cotech.hw.piv.PivSecurityKeyDialogFragment;
 import de.cotech.hw.openpgp.OpenPgpSecurityKey;
 import de.cotech.hw.openpgp.pairedkey.PairedSecurityKey;
 import de.cotech.hw.ui.SecurityKeyDialogInterface;
@@ -293,6 +300,11 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 	}
 
 	@Override
+	public void onBottomSheetAddPIVSecurityKey() {
+		addPIVSecurityKey();
+	}
+
+	@Override
 	public void onBottomSheetSetupSecurityKey(OpenPgpSecurityKey.AlgorithmConfig algorithmConfig) {
 		setupSecurityKey(algorithmConfig);
 	}
@@ -328,7 +340,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 
                     securityKeyDialogFragment.postRunnable(() -> {
                         securityKeyDialogInterface.successAndDismiss();
-                        addSecurityKey(publicKey, nickname);
+                        addSecurityKey(publicKey, nickname, "openpgp");
                     });
                 } catch (IOException e) {
                     securityKeyDialogFragment.postError(e);
@@ -337,6 +349,51 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
         });
         securityKeyDialogFragment.show(getSupportFragmentManager());
     }
+
+	private void addPIVSecurityKey() {
+		SecurityKeyDialogOptions options = SecurityKeyDialogOptions.builder()
+				.setPinMode(SecurityKeyDialogOptions.PinMode.NO_PIN_INPUT)
+				.setShowReset(true)
+				.setShowSdkLogo(true)
+				.setPreventScreenshots(!BuildConfig.DEBUG)
+				.setTitle(getString(R.string.pubkey_add_piv_security_key))
+				.setTheme(R.style.SecurityKeyDialog)
+				.build();
+
+		SecurityKeyDialogFragment<PivSecurityKey> securityKeyDialogFragment = PivSecurityKeyDialogFragment.newInstance(options);
+		securityKeyDialogFragment.setSecurityKeyDialogCallback((SecurityKeyDialogInterface.SecurityKeyDialogCallback<PivSecurityKey>) (securityKeyDialogInterface, pivSecurityKey, pinProvider) -> {
+			new Thread(() -> {
+				try {
+
+					SecurityKeyAuthenticator authenticator = pivSecurityKey.createSecurityKeyAuthenticator(pinProvider, PivKeyReference.AUTHENTICATION);
+					String subject = "";
+
+					try{
+						byte[] certBytes = authenticator.retrieveCertificateData();
+						CertificateFactory fact = CertificateFactory.getInstance("X.509");
+						X509Certificate certificate = (X509Certificate)fact.generateCertificate(new ByteArrayInputStream(certBytes));
+						subject = certificate.getSubjectX500Principal().getName();
+					}
+					catch(CertificateException ce){
+						Log.e(TAG,"Couldn't retrieve certificate", ce);
+					}
+
+					String nickname = subject.equals("") ? "PIV key" : subject;
+
+					PublicKey publicKey = authenticator.retrievePublicKey();
+
+					securityKeyDialogFragment.postRunnable(() -> {
+						securityKeyDialogInterface.successAndDismiss();
+						addSecurityKey(publicKey, nickname, "piv");
+					});
+				} catch (IOException e) {
+					securityKeyDialogFragment.postError(e);
+				}
+			}).start();
+		});
+		securityKeyDialogFragment.show(getSupportFragmentManager());
+	}
+
 
     private void setupSecurityKey(OpenPgpSecurityKey.AlgorithmConfig algorithmConfig) {
         SecurityKeyDialogOptions options = SecurityKeyDialogOptions.builder()
@@ -357,7 +414,7 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
 
                     securityKeyDialogFragment.postRunnable(() -> {
                         securityKeyDialogInterface.successAndDismiss();
-                        addSecurityKey(publicKey, nickname);
+                        addSecurityKey(publicKey, nickname, "openpgp");
                     });
                 } catch (IOException e) {
                     securityKeyDialogFragment.postError(e);
@@ -367,9 +424,10 @@ public class PubkeyListActivity extends AppCompatListActivity implements EventLi
         securityKeyDialogFragment.show(getSupportFragmentManager());
     }
 
-	private void addSecurityKey(PublicKey publicKey, String nickname) {
+	private void addSecurityKey(PublicKey publicKey, String nickname, String securityKeyType) {
 		PubkeyBean pubkey = new PubkeyBean();
 		pubkey.setSecurityKey(true);
+		pubkey.setSecurityKeyType(securityKeyType);
 		pubkey.setPublicKey(publicKey.getEncoded());
 		pubkey.setNickname(nickname);
 		String algorithm = convertAlgorithmName(publicKey.getAlgorithm());

@@ -38,6 +38,7 @@ public class PubkeyAddBottomSheetDialog extends BottomSheetDialogFragment
         view.findViewById(R.id.bottomsheet_generate_key).setOnClickListener(this);
         view.findViewById(R.id.bottomsheet_import_existing_key).setOnClickListener(this);
         view.findViewById(R.id.bottomsheet_add_openpgp_security_key).setOnClickListener(this);
+        view.findViewById(R.id.bottomsheet_add_piv_security_key).setOnClickListener(this);
         view.findViewById(R.id.bottomsheet_setup_openpgp_security_key)
                 .setOnClickListener(this);
 
@@ -74,6 +75,9 @@ public class PubkeyAddBottomSheetDialog extends BottomSheetDialogFragment
                 break;
             case R.id.bottomsheet_add_openpgp_security_key:
                 listener.onBottomSheetAddSecurityKey();
+                break;
+            case R.id.bottomsheet_add_piv_security_key:
+                listener.onBottomSheetAddPIVSecurityKey();
                 break;
             case R.id.bottomsheet_setup_openpgp_security_key:
                 OpenPgpSecurityKey.AlgorithmConfig algorithmConfig;
@@ -113,6 +117,8 @@ public class PubkeyAddBottomSheetDialog extends BottomSheetDialogFragment
         void onBottomSheetImportKey();
 
         void onBottomSheetAddSecurityKey();
+
+        void onBottomSheetAddPIVSecurityKey();
 
         void onBottomSheetSetupSecurityKey(OpenPgpSecurityKey.AlgorithmConfig algorithmConfig);
     }

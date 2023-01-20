@@ -40,6 +40,17 @@
         app:drawableStartCompat="@drawable/ic_usb_nfc_security_key_plus" />
 
     <TextView
+        android:id="@+id/bottomsheet_add_piv_security_key"
+        style="@style/SecurityKeySheetActionItem"
+        android:text="@string/pubkey_add_piv_security_key"
+        app:drawableTint="#fff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottomsheet_add_openpgp_security_key"
+        app:drawableLeftCompat="@drawable/ic_usb_nfc_security_key_plus"
+        app:drawableStartCompat="@drawable/ic_usb_nfc_security_key_plus" />
+
+    <TextView
         android:id="@+id/bottomsheet_setup_openpgp_security_key"
         style="@style/SecurityKeySheetActionItem"
         android:text="@string/pubkey_setup_security_key"
@@ -48,7 +59,7 @@
         app:drawableTint="#fff"
         app:layout_constraintEnd_toStartOf="@+id/bottomsheet_setup_openpgp_security_key_spinner"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bottomsheet_add_openpgp_security_key" />
+        app:layout_constraintTop_toBottomOf="@+id/bottomsheet_add_piv_security_key" />
 
     <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/bottomsheet_setup_openpgp_security_key_spinner"

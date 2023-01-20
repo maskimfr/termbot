@@ -83,6 +83,12 @@
 		</activity>
 
 		<activity
+			android:name=".SecurityKeyPivActivity"
+			android:theme="@style/AppTheme.SmartcardActivity.Translucent"
+			android:configChanges="keyboard|keyboardHidden|orientation">
+		</activity>
+
+		<activity
 			android:name=".PubkeyListActivity"
 			android:configChanges="keyboard|keyboardHidden|orientation"
 			android:label="@string/title_pubkey_list">

@@ -55,7 +55,7 @@ public class SecurityKeySignatureProxy extends SignatureProxy {
 	private SecurityKeyService mSecurityKeyService = null;
 	private boolean cancelled;
 
-	public SecurityKeySignatureProxy(PublicKey publicKey, String pubkeyNickname, Context appContext) {
+	public SecurityKeySignatureProxy(PublicKey publicKey, String pubkeyNickname, String securityKeyType, Context appContext) {
 		super(publicKey);
 
 		mResultReadyLatch = new CountDownLatch(1);
@@ -65,7 +65,7 @@ public class SecurityKeySignatureProxy extends SignatureProxy {
 			public void onServiceConnected(ComponentName className, IBinder service) {
 				mSecurityKeyService = ((SecurityKeyService.SecurityKeyServiceBinder) service).getService();
 				mSecurityKeyService.setSignatureProxy(SecurityKeySignatureProxy.this);
-				mSecurityKeyService.startActivity(pubkeyNickname);
+				mSecurityKeyService.startActivity(pubkeyNickname, securityKeyType);
 			}
 
 			@Override

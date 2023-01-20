@@ -46,6 +46,7 @@ public class PubkeyBean extends AbstractBean {
 	private boolean startup = false;
 	private boolean confirmUse = false;
 	private boolean securityKey = false;
+	private String securityKeyType;
 	private int lifetime = 0;
 
 	/* Transient values */
@@ -138,6 +139,14 @@ public class PubkeyBean extends AbstractBean {
 		this.securityKey = securityKey;
 	}
 
+	public void setSecurityKeyType(String securityKeyType) {
+		this.securityKeyType = securityKeyType;
+	}
+
+	public String getSecurityKeyType() {
+		return securityKeyType;
+	}
+
 	public boolean isConfirmUse() {
 		return confirmUse;
 	}
@@ -196,6 +205,7 @@ public class PubkeyBean extends AbstractBean {
 		if (securityKey) {
 			sb.append(' ');
 			sb.append(res.getString(R.string.key_attribute_hardware));
+			sb.append(" (" + securityKeyType + ")");
 		}
 
 		return sb.toString();
@@ -217,6 +227,7 @@ public class PubkeyBean extends AbstractBean {
 		values.put(PubkeyDatabase.FIELD_PUBKEY_CONFIRMUSE, confirmUse ? 1 : 0);
 		values.put(PubkeyDatabase.FIELD_PUBKEY_LIFETIME, lifetime);
 		values.put(PubkeyDatabase.FIELD_PUBKEY_SECURITYKEY, securityKey ? 1 : 0);
+		values.put(PubkeyDatabase.FIELD_PUBKEY_SECURITYKEYTYPE, securityKeyType);
 
 		return values;
 	}

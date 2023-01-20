@@ -242,6 +242,7 @@ dependencyUpdates {
 dependencies {
     // added by Termbot
     implementation 'com.github.cotechde.hwsecurity:hwsecurity-openpgp:4.4.0'
+    implementation 'com.github.cotechde.hwsecurity:hwsecurity-piv:4.4.0'
     implementation 'com.github.cotechde.hwsecurity:hwsecurity-ui:4.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 

@@ -327,7 +327,7 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 		PublicKey pubKey = PubkeyUtils.decodePublic(pubkey.getPublicKey(), pubkey.getType());
 		String nickname = pubkey.getNickname();
 
-		SecurityKeySignatureProxy securityKeySignatureProxy = new SecurityKeySignatureProxy(pubKey, nickname, manager.getApplicationContext());
+		SecurityKeySignatureProxy securityKeySignatureProxy = new SecurityKeySignatureProxy(pubKey, nickname, pubkey.getSecurityKeyType(), manager.getApplicationContext());
 		boolean success = connection.authenticateWithPublicKey(host.getUsername(), securityKeySignatureProxy);
 
 		if (!success)
