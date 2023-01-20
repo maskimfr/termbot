@@ -2,9 +2,9 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [ termbot-piv ]
+    branches: [ termbot-piv-citest ]
   pull_request:
-    branches: [ termbot-piv ]
+    branches: [ termbot-piv-citest ]
   workflow_dispatch:
     
 jobs:
