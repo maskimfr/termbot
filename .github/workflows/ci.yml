@@ -2,11 +2,10 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [ main ]
+    branches: [ termbot-piv ]
   pull_request:
-    branches: [ main ]
-  schedule:
-    - cron: "0 7 */3 * *"
+    branches: [ termbot-piv ]
+  workflow_dispatch:
     
 jobs:
   build:
