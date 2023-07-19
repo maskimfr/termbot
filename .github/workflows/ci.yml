@@ -34,7 +34,9 @@ jobs:
           key: ${{ runner.os }}-gradle-home-examples-${{ hashFiles('**/*.gradle') }}
 
       - name: Build ConnectBot
+        run: ./gradlew :spotlessApply
         run: ./gradlew build
+
 
       - name: Run instrument tests
         uses: reactivecircus/android-emulator-runner@v2.25.0
