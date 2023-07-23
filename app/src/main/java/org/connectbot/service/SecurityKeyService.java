@@ -27,9 +27,9 @@ import android.os.Binder;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
 import de.cotech.hw.SecurityKeyAuthenticator;
-import de.cotech.hw.piv.PivSecurityKey;
-import de.cotech.hw.piv.PivSecurityKeyDialogFragment;
-import de.cotech.hw.ui.SecurityKeyDialogFragment;
+//import de.cotech.hw.piv.PivSecurityKey;
+//import de.cotech.hw.piv.PivSecurityKeyDialogFragment;
+//import de.cotech.hw.ui.SecurityKeyDialogFragment;
 import de.cotech.hw.ui.SecurityKeyDialogInterface;
 
 /**
@@ -68,11 +68,11 @@ public class SecurityKeyService extends Service {
 	public void startActivity(String pubKeyNickname, String securityKeyType) {
 
 		Intent intent;
-		if(securityKeyType.equals("openpgp")){
+		if (securityKeyType.equals("openpgp")) {
 			intent = new Intent(this, SecurityKeyActivity.class);
-		}else if(securityKeyType.equals("piv")){
+		 } else if (securityKeyType.equals("piv")) {
 			intent = new Intent(this, SecurityKeyPivActivity.class);
-		}else{
+		} else {
 			throw new IllegalStateException("Invalid Security Key Type");
 		}
 
